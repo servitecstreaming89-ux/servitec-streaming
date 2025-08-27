@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador</title>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body data-gallery-key="panel-administrador">
+
+  <section class="section">
+    <div class="container" data-aos="fade-up">
+      <h2>⚙️ Panel Administrador</h2>
+      <p class="lead">Crea nuevos servicios o plataformas y genera sus subpáginas automáticamente.</p>
+
+      <div class="upload-box">
+        <h3>🛠️ Agregar Servicio</h3>
+        <input type="text" id="servicio-nombre" placeholder="Nombre del servicio">
+        <textarea id="servicio-descripcion" placeholder="Descripción"></textarea>
+        <input type="file" id="servicio-media" accept="image/*,video/*">
+        <button onclick="crearSubpagina('servicio')" class="btn">Generar Subpágina de Servicio</button>
+      </div>
+
+      <div class="upload-box">
+        <h3>🎬 Agregar Plataforma</h3>
+        <input type="text" id="plataforma-nombre" placeholder="Nombre de la plataforma">
+        <textarea id="plataforma-descripcion" placeholder="Descripción"></textarea>
+        <input type="file" id="plataforma-media" accept="image/*,video/*">
+        <button onclick="crearSubpagina('plataforma')" class="btn">Generar Subpágina de Plataforma</button>
+      </div>
+
+      <div id="resultados" class="upload-box">
+        <h3>📂 Subpáginas generadas</h3>
+        <ul id="lista-subpaginas"></ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  function crearSubpagina(tipo){
+    let nombre = document.getElementById(tipo+'-nombre').value.trim();
+    let desc = document.getElementById(tipo+'-descripcion').value.trim();
+    let fileInput = document.getElementById(tipo+'-media');
+    if(!nombre || !desc){ alert('Completa todos los campos'); return; }
+    let mediaTag = '';
+    if(fileInput.files.length>0){
+      let file = fileInput.files[0];
+      let url = URL.createObjectURL(file);
+      if(file.type.startsWith('video/')){
+        mediaTag = `<video controls autoplay muted loop style="width:100%;border-radius:10px"><source src="${url}" type="${file.type}"></video>`;
+      } else {
+        mediaTag = `<img src="${url}" alt="" style="width:100%;border-radius:10px">`;
+      }
+    }
+
+    let html = `<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${nombre}</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head><body data-gallery-key="${nombre.toLowerCase().replace(/\s+/g,'-')}">
+<section class="hero"><div class="container hero-inner">
+<div data-aos="fade-right"><h1>${nombre}</h1><p>${desc}</p></div>
+<div class="hero-media" data-aos="zoom-in">${mediaTag}</div>
+</div></section>
+<section class="section"><div class="container">
+<h2>Galería</h2>
+<div class="upload-box">
+<input id="upload-media" type="file" accept="image/*,video/*" multiple>
+<button id="add-media" class="btn">➕ Agregar a la galería</button>
+</div>
+<div class="gallery" data-gallery></div>
+</div></section>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="js/app.js"></script>
+</body></html>`;
+
+    let blob = new Blob([html], {type:'text/html'});
+    let url = URL.createObjectURL(blob);
+    let li = document.createElement('li');
+    li.innerHTML = `<a download="${tipo}-${nombre.toLowerCase().replace(/\s+/g,'-')}.html" href="${url}">⬇️ Descargar ${nombre}</a>`;
+    document.getElementById('lista-subpaginas').appendChild(li);
+  }
+  </script>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Servitec Streaming — Panel Administrador (oculto)</p>
+    </div>
+  </footer>
+  <div id="page-overlay"></div>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
